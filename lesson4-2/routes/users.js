@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const User = require('../models/User');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
+const requireAuth = require('../middleware/auth')
 //Register
 
 router.post('/register',async(req,res,next)=>{
@@ -57,6 +58,9 @@ router.post('/login', async (req, res, next) => {
       },process.env.JWT_SECRET,{expiresIn:process.env.JWT_EXPIRES_IN});
 
       console.log(token);
+      const decoded = jwt.verify(token,process.env.JWT_SECRET);
+      console.log(decoded);
+      
       
       
   
@@ -64,6 +68,11 @@ router.post('/login', async (req, res, next) => {
     } catch(err) {
       next(err)
     }
+  })
+
+  router.get('/profile',requireAuth,async (req,res)=>{
+    const user = await User.findById(req.user.id).select('-password')
+    res.json({ user })
   })
 
 module.exports=router
