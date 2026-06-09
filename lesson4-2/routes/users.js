@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 const User = require('../models/User');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-const requireAuth = require('../middleware/auth')
+const {requireAuth ,requireRole}= require('../middleware/auth')
 //Register
 
 router.post('/register',async(req,res,next)=>{
@@ -57,13 +57,9 @@ router.post('/login', async (req, res, next) => {
         id: user._id, role: user.role
       },process.env.JWT_SECRET,{expiresIn:process.env.JWT_EXPIRES_IN});
 
-      console.log(token);
+      
       const decoded = jwt.verify(token,process.env.JWT_SECRET);
-      console.log(decoded);
       
-      
-      
-  
       res.json({ message: "Login successful!" ,token})
     } catch(err) {
       next(err)
@@ -74,5 +70,19 @@ router.post('/login', async (req, res, next) => {
     const user = await User.findById(req.user.id).select('-password')
     res.json({ user })
   })
+  // Only admins
+  router.delete('/users/:id', requireAuth, requireRole('admin'), (req, res) => {
+    res.json({ message: "User deleted!" })
+  })
+  
+  // Admins OR moderators
+  router.put('/posts/:id', requireAuth, requireRole('admin', 'moderator'), (req, res) => {
+    res.json({ message: "Post updated!" })
+  })
 
+  router.get('/admin',requireAuth,requireRole('admin'),(req,res)=>{
+    res.status(200).json({
+      message:"Welcome Admin"
+    })
+  })
 module.exports=router
