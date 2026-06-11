@@ -6,20 +6,9 @@
 const express = require('express')
 const router = express.Router()
 const Post = require('../models/Post')
-
+const getAllPosts = require('../controllers/post.controller.js')
 // GET all posts
-router.get('/', async (req, res, next) => {
-  try {
-    const posts = await Post.find()
-      .populate('author', 'name email')
-      .select('title content createdAt author')
-      .limit(10)
-      .sort({ createdAt: -1 })
-    res.status(200).json({ posts })
-  } catch(err) {
-    next(err)
-  }
-})
+router.get('/', getAllPosts)
 
 // GET single post
 router.get('/:id', async (req, res, next) => {
