@@ -17,7 +17,7 @@ export interface Iuser{
 export interface Ijob{
     title:string,
     description:string,
-    company:mongoose.ObjectId,
+    company:mongoose.ObjectId | string,
     status:'open'|'close',
     
 }

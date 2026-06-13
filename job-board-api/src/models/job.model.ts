@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
 import { Ijob } from '../types';
+import { string } from 'zod';
 
 const jobSchema = new mongoose.Schema<Ijob>({
     title:{
