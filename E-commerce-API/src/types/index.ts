@@ -23,3 +23,10 @@ export interface Iorder{
     totalPrice:Number,
     status:'pending'|'shipped'|'delivered',
 }
+
+export interface AuthRequest extends Request{
+    user?:{
+        id:string,
+        role:string
+    }
+}
